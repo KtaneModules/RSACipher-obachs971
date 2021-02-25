@@ -194,6 +194,7 @@ public class rsaCipher : MonoBehaviour {
         if (!(moduleSolved))
         {
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+            submit.AddInteractionPunch();
             if (answer.Equals(submission))
             {
                 StopAllCoroutines();
@@ -202,12 +203,15 @@ public class rsaCipher : MonoBehaviour {
                 screenTexts[2].text = "";
                 screenTexts[3].text = "";
                 Audio.PlaySoundAtTransform(solveAudio.name, transform);
+                moduleSolved = true;
                 module.HandlePass();
             }
             else
             {
                 module.HandleStrike();
-                Clear();
+                StopAllCoroutines();
+                submission = "";
+                StartCoroutine(FlashingCursor());
             }
         }
     }
@@ -215,11 +219,16 @@ public class rsaCipher : MonoBehaviour {
     {
         if (!(moduleSolved))
         {
+            Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+            clear.AddInteractionPunch();
             StopAllCoroutines();
             submission = "";
             StartCoroutine(FlashingCursor());
         }
     }
+#pragma warning disable 414
+    private string TwitchHelpMessage = "Submit the decrypted word with !{0} submit QWERTY";
+#pragma warning restore 414
     private IEnumerator ProcessTwitchCommand(string command)
     {
         string[] split = command.ToUpperInvariant().Split(' ');
